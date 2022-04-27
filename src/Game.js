@@ -344,6 +344,7 @@ class Game extends React.Component {
   }
 
   sendMsg(msg) {
+    // const ws = new WebSocket(this.url, this.protocols, {rejectUnauthorized: false});
     const ws = new WebSocket(this.url);
     ws.onmessage = (evt) => this.updateBoardFromMsg(evt);
     ws.onclose = (e) => {
@@ -356,11 +357,12 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log(process.env.NODE_TLS_REJECT_UNAUTHORIZED);
     this.player = this.props.color;
-    if (this.player == "black") {
+    if (this.player === "black") {
       this.oppPlayer = "white";
     }
-    else if (this.player == "white") {
+    else if (this.player === "white") {
       this.oppPlayer = "black";
     }
     else {
@@ -368,10 +370,10 @@ class Game extends React.Component {
     }
 
     if (this.props.difficulty === "easy") {
-      this.url = "ws://"+abaloneAIServer+":9000/ab3";
+      this.url = "wss://"+abaloneAIServer+":9000/ab3";
     }
     else if (this.props.difficulty === "normal") {
-      this.url = "ws://"+abaloneAIServer+":9000/mcts";
+      this.url = "wss://"+abaloneAIServer+":9000/mcts";
     }
     this.history = [];
     this.state = {
