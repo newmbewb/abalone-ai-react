@@ -369,10 +369,10 @@ class Game extends React.Component {
     }
 
     if (this.props.difficulty === "easy") {
-      this.url = "wss://"+abaloneAIServer+":9000/ab3";
+      this.url = "ws://"+abaloneAIServer+":9000/ab3";
     }
     else if (this.props.difficulty === "normal") {
-      this.url = "wss://"+abaloneAIServer+":9000/mcts";
+      this.url = "ws://"+abaloneAIServer+":9000/mcts";
     }
     this.history = [];
     this.state = {
