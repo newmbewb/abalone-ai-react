@@ -1,7 +1,7 @@
 import { typeImplementation } from '@testing-library/user-event/dist/type/typeImplementation';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { max_xy, board_size, directions, abaloneAIServer } from './Config';
+import { max_xy, board_size, directions } from './Config';
 import './index.css';
 
 class Circle extends React.Component {
@@ -369,10 +369,10 @@ class Game extends React.Component {
     }
 
     if (this.props.difficulty === "easy") {
-      this.url = "ws://"+abaloneAIServer+":9000/ab3";
+      this.url = "ws://"+window.location.hostname+":9000/ab3";
     }
     else if (this.props.difficulty === "normal") {
-      this.url = "ws://"+abaloneAIServer+":9000/mcts";
+      this.url = "ws://"+window.location.hostname+":9000/mcts";
     }
     this.history = [];
     this.state = {
