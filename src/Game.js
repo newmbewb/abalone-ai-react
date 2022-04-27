@@ -357,7 +357,6 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(process.env.NODE_TLS_REJECT_UNAUTHORIZED);
     this.player = this.props.color;
     if (this.player === "black") {
       this.oppPlayer = "white";
