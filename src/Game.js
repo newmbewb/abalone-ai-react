@@ -2,6 +2,7 @@ import { typeImplementation } from '@testing-library/user-event/dist/type/typeIm
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { max_xy, board_size, directions } from './Config';
+import useConfirm from './useConfirm';
 import './index.css';
 
 class Circle extends React.Component {
@@ -402,7 +403,8 @@ class Game extends React.Component {
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: 'white', whiteSpace: 'pre' }}>
           <div className="textline">{this.state.statusMessage}</div>
         </div>
-        <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: '#F4B183' }}>
+        <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: '#F4B183' }}
+        onClick={() => useConfirm("게임을 중지하겠습니까?", this.props.goBackHome, () => {})}>
           <div className="textline">홈으로</div>
         </div>
       </div>

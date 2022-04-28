@@ -136,6 +136,14 @@ class Main extends React.Component {
     });
   }
 
+  Reset() {
+    this.setState((state) => {
+      return {
+        now: "home",
+      }
+    });
+  }
+
   render() {
     if (this.state.now === "home") {
     return (
@@ -154,6 +162,7 @@ class Main extends React.Component {
             key={this.gameKey}
             color={this.color}
             difficulty={this.difficulty}
+            goBackHome={() => {this.Reset()}}
           />
         </div>
       )
