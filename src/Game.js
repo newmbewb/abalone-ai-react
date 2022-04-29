@@ -352,7 +352,7 @@ class Game extends React.Component {
       // pass
     }
     ws.onopen = () => {   // 연결!
-      ws.send(msg);
+      ws.send("" + this.props.gameTag + ":" + msg);
     };
   }
 

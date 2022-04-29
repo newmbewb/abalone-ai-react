@@ -163,6 +163,7 @@ class Main extends React.Component {
             color={this.color}
             difficulty={this.difficulty}
             goBackHome={() => {this.Reset()}}
+            gameTag={Math.random()}
           />
         </div>
       )
