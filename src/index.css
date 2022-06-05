@@ -68,6 +68,17 @@ ol, ul {
   background: #ddd;
 }
 
+input {
+  width: 99%;
+  height: 100%;
+  padding: 10px 20px;
+  margin: 5px 0;
+  font-size: 3rem;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 3px solid black;
+}
+
 /* .game {
   display: flex;
   flex-direction: row;

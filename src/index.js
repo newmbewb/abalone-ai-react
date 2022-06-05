@@ -3,9 +3,37 @@ import ReactDOM from 'react-dom/client';
 import { max_xy, board_size, directions } from './Config';
 import Game from './Game'
 import './index.css';
+import cookies from 'react-cookies';
 import { confirmAlert } from 'react-confirm-alert';
 import useConfirm from './useConfirm';
 import alphabetaImage from './alphabeta.png';
+
+class NameForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: 'visitor'};
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1000);
+    // cookies.save('userid', event.target.value, {expires,})
+  }
+
+  render() {
+    const name=cookies.load('usreid');
+    console.log(name);
+    return (
+      <label>
+        <input type="text" value={this.state.value} onChange={this.handleChange} />
+      </label>
+    );
+  }
+}
+
 
 function DifficultyButton(props) {
   return (
@@ -51,10 +79,10 @@ class Home extends React.Component {
     return (
       <div id='home-root' style={{ width: '100%', height: '100%' }}>
         <div id='difficulty'>
-          <div className="square" style={{ width: '15%', height: '75vmin', float: 'left'}}>
+          <div className="square" style={{ width: '15%', height: '64vmin', float: 'left'}}>
             <div className="textline">난이도</div>
           </div>
-          <div className="square" style={{backgroundColor: '#ffef93', width: '85%', height: '75vmin', float: 'left'}}>
+          <div className="square" style={{backgroundColor: '#ffef93', width: '85%', height: '64vmin', float: 'left'}}>
             <div className="centerdiv" style={{ width: '90%', height: '70%' }}>
               <DifficultyButton
                 width="33.33%"
@@ -84,7 +112,21 @@ class Home extends React.Component {
             </div>
           </div>
         </div>
-        <div id='player-color' style={{ float: 'top', height: '15vmin'}}>
+        <div id='player-color' style={{ float: 'top', height: '13vmin'}}>
+          <div className="square" style={{ width: '15%', height: '100%', float: 'left'}}>
+            <div className="textline">아이디</div>
+          </div>
+          <div className="square" style={{
+              backgroundColor: "white",
+              width: '85%',
+              height: '100%',
+              float: 'left'}}>
+            <div className="textline">
+              <NameForm/>
+            </div>
+          </div>
+        </div>
+        <div id='player-color' style={{ float: 'top', height: '13vmin'}}>
           <div className="square" style={{ width: '15%', height: '100%', float: 'left'}}>
             <div className="textline">내 색깔</div>
           </div>
