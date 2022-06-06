@@ -3,29 +3,34 @@ import ReactDOM from 'react-dom/client';
 import { max_xy, board_size, directions } from './Config';
 import Game from './Game'
 import './index.css';
-import cookies from 'react-cookies';
+import './modal.css';
+import { setCookie, getCookie, recordWin, recordLoss, recordDisconnected, getRecordString } from './cookie'
 import { confirmAlert } from 'react-confirm-alert';
 import useConfirm from './useConfirm';
 import alphabetaImage from './alphabeta.png';
+import Popup from 'reactjs-popup';
 
 class NameForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: 'visitor'};
+    var name = getCookie('userid');
+    console.log("cookied name: " + name);
+    if (name === undefined) {
+      name = 'visitor';
+      setCookie(name);
+    }
+    this.state = {value: name};
 
     this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
     this.setState({value: event.target.value});
-    const expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 1000);
-    // cookies.save('userid', event.target.value, {expires,})
+    console.log("hello " + event.target.value);
+    setCookie('userid', event.target.value);
   }
 
   render() {
-    const name=cookies.load('usreid');
-    console.log(name);
     return (
       <label>
         <input type="text" value={this.state.value} onChange={this.handleChange} />
@@ -118,11 +123,55 @@ class Home extends React.Component {
           </div>
           <div className="square" style={{
               backgroundColor: "white",
-              width: '85%',
+              width: '75%',
               height: '100%',
               float: 'left'}}>
             <div className="textline">
               <NameForm/>
+            </div>
+          </div>
+          <div className="square" style={{
+              backgroundColor: "white",
+              width: '10%',
+              height: '100%',
+              float: 'left'}}>
+            <div className="textline">
+            <Popup trigger={<button className="button"> Open Modal </button>} modal nested>
+              {close => (
+                <div className="modal">
+                  <button className="close" onClick={close}>
+                    &times;
+                  </button>
+                  <div className="header"> 전적 </div>
+                  <div className="content">
+                    {' '}
+                    {getRecordString()}
+                  </div>
+                  <div className="actions">
+                    {/* <Popup
+                      trigger={<button className="button"> Trigger </button>}
+                      position="top center"
+                      nested
+                    >
+                      <span>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae
+                        magni omnis delectus nemo, maxime molestiae dolorem numquam
+                        mollitia, voluptate ea, accusamus excepturi deleniti ratione
+                        sapiente! Laudantium, aperiam doloribus. Odit, aut.
+                      </span>
+                    </Popup> */}
+                    <button
+                      className="button"
+                      onClick={() => {
+                        close();
+                      }}
+                    >
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Popup>
             </div>
           </div>
         </div>
