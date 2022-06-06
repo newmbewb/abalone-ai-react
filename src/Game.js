@@ -40,6 +40,10 @@ class Circle extends React.Component {
     else if (this.props.color === 'black' && !this.props.selected) {
       fill = "url(#black)"
       clickable = true
+      if (this.props.moved) {
+        strokeDasharray=.1;
+        stroke="#ED7D31";
+      }
     }
     else if (this.props.color === 'white' && this.props.selected) {
       fill = "url(#whiteSelected)"
@@ -48,10 +52,19 @@ class Circle extends React.Component {
     else if (this.props.color === 'white' && !this.props.selected) {
       fill = "url(#white)"
       clickable = true
+      if (this.props.moved) {
+        strokeDasharray=.1;
+        stroke="#ED7D31";
+      }
     }
     else {
       r = r*0.7
-      fill='#b0b0b0'
+      if (this.props.new_hole) {
+        fill='#A3937B'
+      }
+      else {
+        fill='#b0b0b0'
+      }
     }
 
     // Set stroke
@@ -143,7 +156,8 @@ class Board extends React.Component {
       return;
     }
 
-    if (this.props.grid[new_point] !== null) {
+    if (this.props.grid[new_point] === 'black' || 
+        this.props.grid[new_point] === 'white') {
       this._moveStone(new_point, direction);
     }
     this.props.grid[new_point] = old_value;
@@ -259,6 +273,8 @@ class Board extends React.Component {
       x_indent={x_indent}
       scale={scale}
       selected={this.state.selected.includes(xy2index(x, y))}
+      moved={this.props.movedStones.includes(xy2index(x, y))}
+      new_hole={this.props.newHoles.includes(xy2index(x, y))}
       movable={this.props.playerTurn ? this.movable[xy2index(x, y)] : undefined}
       selectable={this.props.playerTurn && this.selectable.includes(xy2index(x, y))}
       addSelected={(x, y) => this.addSelected(x, y)}
@@ -340,6 +356,8 @@ class Game extends React.Component {
     let splitData = evt.data.split(":");
     let playerTurn = splitData[0];
     let board = splitData[1];
+    let movedStones = splitData[2].split(",").map(x => parseInt(x));
+    let newHoles = splitData[3].split(",").map(x => parseInt(x));
     const decoded = decodeGrid(board);
     const grid = decoded[0];
     if (playerTurn === "true") {
@@ -352,7 +370,7 @@ class Game extends React.Component {
     const deadBlacks = decoded[1];
     const deadWhites = decoded[2];
     const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점"
-    updateState(this, {"currentGrid": grid, "playerIsNext": playerTurn, "statusMessage": statusMessage});
+    updateState(this, {"currentGrid": grid, "playerIsNext": playerTurn, "statusMessage": statusMessage, "movedStones": movedStones, "newHoles": newHoles});
   }
 
   updateBoard(grid) {
@@ -415,6 +433,8 @@ class Game extends React.Component {
       playerIsNext: true,
       winner: null,
       statusMessage: "",
+      movedStones: [],
+      newHoles: [],
     };
     this.state.currentGrid = Array(max_xy * max_xy).fill(null);
     this.sendMsg(this.player+":start");
@@ -432,6 +452,8 @@ class Game extends React.Component {
             playerTurn={this.state.playerIsNext}
             sendMove={(selected, direction) => this.sendMove(selected, direction)}
             winner={this.state.winner}
+            movedStones={this.state.movedStones}
+            newHoles={this.state.newHoles}
           />
         </div>
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: 'white', whiteSpace: 'pre' }}>
