@@ -95,5 +95,5 @@ export const getRecordString = () => {
         record_str_list.push(difficulty + ': ' + record_str);
     }
     const record_str = record_str_list.join("\n");
-    return record_str
+    return record_str;
 }

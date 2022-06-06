@@ -87,6 +87,7 @@ class Board extends React.Component {
   sendMove(direction) {
     const selected = this.state.selected.join(",");
     this.props.sendMove(selected, direction);
+    this.moveStones(this.state.selected, direction);
     updateState(this, {"selected": []});
   }
 
@@ -127,6 +128,34 @@ class Board extends React.Component {
       ret.push(dir);
     }
     return ret;
+  }
+
+  _moveStone(stone, direction) {
+    const old_value = this.props.grid[stone];
+    const new_point = stone + direction;
+
+    // Check whether the point is out of the board
+    if (new_point < 0 || new_point > max_xy * max_xy) {
+      return;
+    }
+    const xy = index2xy(new_point);
+    if (Math.abs(xy[0] - xy[1]) > board_size) {
+      return;
+    }
+
+    if (this.props.grid[new_point] !== null) {
+      this._moveStone(new_point, direction);
+    }
+    this.props.grid[new_point] = old_value;
+    this.props.grid[stone] = null;
+  }
+
+  moveStones(selected, direction) {
+    const selected_length = selected.length;
+    for (var i = 0; i < selected_length; i++) {
+      this._moveStone(selected[i], direction);
+    }
+    this.props.updateBoard(this.props.grid);
   }
 
   updateMovable(selected) {
@@ -326,6 +355,10 @@ class Game extends React.Component {
     updateState(this, {"currentGrid": grid, "playerIsNext": playerTurn, "statusMessage": statusMessage});
   }
 
+  updateBoard(grid) {
+    updateState(this, {"currentGrid": grid});
+  }
+
   sendMove(selected, direction) {
     // Encode board
     let grid = "";
@@ -340,8 +373,8 @@ class Game extends React.Component {
         grid += '.';
       }
     }
-    this.sendMsg([this.player, grid, selected, direction].join(":"));
     updateState(this, {"playerIsNext": false});
+    this.sendMsg([this.player, grid, selected, direction].join(":"));
   }
 
   sendMsg(msg) {
@@ -393,6 +426,7 @@ class Game extends React.Component {
         <div className="game-board" style={{ width: '95vmin', height: '95vmin' }}>
           <Board
             grid={this.state.currentGrid}
+            updateBoard={(grid) => this.updateBoard(grid)}
             player={this.player}
             oppPlayer={this.oppPlayer}
             playerTurn={this.state.playerIsNext}
