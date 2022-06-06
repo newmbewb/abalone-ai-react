@@ -3,6 +3,18 @@
     width: 600px;
     background: #F9D6BF;
 }
+.modal-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    border: None;
+    /* font-size: inherit; */
+    font: inherit;
+    /* font-style: inherit; */
+}
 .modal > .header {
     width: 100%;
     border-bottom: 1px solid gray;

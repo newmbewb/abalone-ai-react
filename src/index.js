@@ -136,7 +136,7 @@ class Home extends React.Component {
               height: '100%',
               float: 'left'}}>
             <div className="textline">
-            <Popup trigger={<button className="button"> Open Modal </button>} modal nested>
+            <Popup trigger={<button className="modal-button">전적</button>} modal nested>
               {close => (
                 <div className="modal">
                   <button className="close" onClick={close}>
