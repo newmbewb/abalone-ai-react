@@ -420,12 +420,7 @@ class Game extends React.Component {
       console.log("Invalid player..");
     }
 
-    if (this.props.difficulty === "easy") {
-      this.url = "ws://"+window.location.hostname+":9000/ab3";
-    }
-    else if (this.props.difficulty === "normal") {
-      this.url = "ws://"+window.location.hostname+":9000/mcts";
-    }
+    this.url = "ws://"+window.location.hostname+":9000/"+this.props.bot;
     this.history = [];
     this.state = {
       currentGrid: null,
@@ -458,6 +453,17 @@ class Game extends React.Component {
         </div>
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: 'white', whiteSpace: 'pre' }}>
           <div className="textline">{this.state.statusMessage}</div>
+        </div>
+        <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: 'white', whiteSpace: 'pre' }}>
+          <div className="square" style={{ width: '80%', height: '100%', float: 'left'}}>
+            <div className="textline">  </div>
+          </div>
+          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}>
+            <div className="textline">&lt;&lt;</div>
+          </div>
+          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}>
+            <div className="textline">&gt;&gt;</div>
+          </div>
         </div>
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: '#F4B183' }}
         onClick={() => useConfirm("게임을 중지하겠습니까?", this.props.goBackHome, () => {})}>

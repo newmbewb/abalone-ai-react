@@ -9,6 +9,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import useConfirm from './useConfirm';
 import alphabetaImage from './alphabeta.png';
 import Popup from 'reactjs-popup';
+import { bot2difficulty, bot2explanation } from './gameBot';
 
 class NameForm extends React.Component {
   constructor(props) {
@@ -50,29 +51,20 @@ function DifficultyButton(props) {
 }
 
 function PrintDecription(props) {
-  if (props.difficulty === "easy") {
-    return (
-      "AlphaBeta Purning으로 만들어진 인공지능입니다.\n쉽게 이길 수 있습니다. 세 수 앞을 내다봅니다."
-    )
-  }
-  if (props.difficulty === "normal") {
-    return (
-      "Monte Carlo Tree Search로 만들어진 인공지능입니다.\n아발론에 익숙한 유저만이 이길 수 있습니다. 강한 수읽기를 구사합니다."
-    )
-  }
+  return bot2explanation(props.bot);
 }
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      difficulty: "easy",
+      bot: "ab3",
       color: "black"
     };
   }
-  selectDifficulty(difficulty) {
+  selectBot(bot) {
     this.setState((state) => {
-      return {difficulty: difficulty}
+      return {bot: bot}
     });
   }
   setColor(color) {
@@ -91,26 +83,26 @@ class Home extends React.Component {
             <div className="centerdiv" style={{ width: '90%', height: '70%' }}>
               <DifficultyButton
                 width="33.33%"
-                text="쉬움"
-                backgroundColor={this.state.difficulty === "easy" ? "#ddd" : "white"}
-                onClick={() => this.selectDifficulty("easy")}
+                text={bot2difficulty('ab3')}
+                backgroundColor={this.state.bot === 'ab3' ? "#ddd" : "white"}
+                onClick={() => this.selectBot('ab3')}
               />
               <DifficultyButton
                 width="33.33%"
-                text="보통"
-                backgroundColor={this.state.difficulty === "normal" ? "#ddd" : "white"}
-                onClick={() => this.selectDifficulty("normal")}
+                text={bot2difficulty('mcts')}
+                backgroundColor={this.state.bot === "mcts" ? "#ddd" : "white"}
+                onClick={() => this.selectBot("mcts")}
               />
               <DifficultyButton
                 width="33.33%"
                 text="어려움 (만드는 중)"
-                backgroundColor={this.state.difficulty === "hard" ? "#ddd" : "white"}
-                // onClick={() => this.selectDifficulty("hard")}
+                backgroundColor={this.state.bot === "hard" ? "#ddd" : "white"}
+                // onClick={() => this.selectBot("hard")}
               />
               <div className="square" style={{ backgroundColor: '#ddd', width: '99.99%', height: '80%', boxShadow: "0 0 0 0.5px #ddd inset" }}>
                 <div className="textline" style={{fontSize: "2rem", whiteSpace: "pre-wrap"}}>
                   <PrintDecription
-                    difficulty={this.state.difficulty}
+                    bot={this.state.bot}
                   />
                 </div>
               </div>
@@ -197,7 +189,7 @@ class Home extends React.Component {
           </div>
         </div>
         <div className="square" style={{backgroundColor: '#ffaaaa', width: '100%', height: '10vmin', float: 'left'}}
-          onClick={() => this.props.startGame(this.state.color, this.state.difficulty)}>
+          onClick={() => this.props.startGame(this.state.color, this.state.bot)}>
           <div className="textline">시작</div>
         </div>
       </div>
@@ -209,16 +201,16 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.color = "black";
-    this.difficulty = "easy";
+    this.bot = "ab3";
     this.gameKey = 0;
     this.state = {
       now: "home",
     };
   }
 
-  startGame(color, difficulty) {
+  startGame(color, bot) {
     this.color = color;
-    this.difficulty = difficulty;
+    this.bot = bot;
     this.gameKey += 1;
     this.setState((state) => {
       return {
@@ -252,7 +244,7 @@ class Main extends React.Component {
           <Game
             key={this.gameKey}
             color={this.color}
-            difficulty={this.difficulty}
+            bot={this.bot}
             goBackHome={() => {this.Reset()}}
             gameTag={Math.random()}
           />
