@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { max_xy, board_size, directions } from './Config';
 import useConfirm from './useConfirm';
 import './index.css';
+import { bot2difficulty } from './gameBot';
 
 class Circle extends React.Component {
   handleClick = () => {
@@ -101,6 +102,7 @@ class Board extends React.Component {
     const selected = this.state.selected.join(",");
     this.props.sendMove(selected, direction);
     this.moveStones(this.state.selected, direction);
+    
     updateState(this, {"selected": []});
   }
 
@@ -143,8 +145,8 @@ class Board extends React.Component {
     return ret;
   }
 
-  _moveStone(stone, direction) {
-    const old_value = this.props.grid[stone];
+  _moveStone(grid, stone, direction) {
+    const old_value = grid[stone];
     const new_point = stone + direction;
 
     // Check whether the point is out of the board
@@ -156,20 +158,21 @@ class Board extends React.Component {
       return;
     }
 
-    if (this.props.grid[new_point] === 'black' || 
-        this.props.grid[new_point] === 'white') {
+    if (grid[new_point] === 'black' || 
+        grid[new_point] === 'white') {
       this._moveStone(new_point, direction);
     }
-    this.props.grid[new_point] = old_value;
-    this.props.grid[stone] = null;
+    grid[new_point] = old_value;
+    grid[stone] = null;
   }
 
   moveStones(selected, direction) {
     const selected_length = selected.length;
+    const grid = this.props.grid.slice();
     for (var i = 0; i < selected_length; i++) {
-      this._moveStone(selected[i], direction);
+      this._moveStone(grid, selected[i], direction);
     }
-    this.props.updateBoard(this.props.grid);
+    this.props.updateBoard(grid);
   }
 
   updateMovable(selected) {
@@ -297,6 +300,7 @@ class Board extends React.Component {
   }
 
   render() {
+    console.log('Player turn: ' + this.props.playerTurn);
     this.updateMovable(this.state.selected);
     this.updateSelectable(this.state.selected);
     return (
@@ -338,11 +342,10 @@ class Board extends React.Component {
 
 class Game extends React.Component {
   appendLog(grid) {
-    this.setState((state) => {
-      this.history.concat([{
-        grid: grid
-      }])
-    });
+    const history = this.state.history.splice(0, this.state.moveNumber);
+    updateState(this,
+      {'history': history.concat([{grid: grid}]),
+      'moveNumber': this.state.moveNumber + 1});
   }
   updateBoardFromMsg(evt) {
     if (evt.data === "false:black_win") {
@@ -374,7 +377,7 @@ class Game extends React.Component {
   }
 
   updateBoard(grid) {
-    updateState(this, {"currentGrid": grid});
+    this.setState({currentGrid: grid});
   }
 
   sendMove(selected, direction) {
@@ -391,8 +394,9 @@ class Game extends React.Component {
         grid += '.';
       }
     }
-    updateState(this, {"playerIsNext": false});
     this.sendMsg([this.player, grid, selected, direction].join(":"));
+    updateState(this, {"playerIsNext": false});
+    console.log("change unmovable.")
   }
 
   sendMsg(msg) {
@@ -405,6 +409,16 @@ class Game extends React.Component {
     ws.onopen = () => {   // 연결!
       ws.send("" + this.props.gameTag + ":" + msg);
     };
+  }
+
+  undo() {
+    const curMoveNumber = this.state.moveNumber;
+    console.log('Undo!!!! ' + curMoveNumber);
+    if (curMoveNumber == 0) {
+      return;
+    }
+    this.updateBoard(this.state.history[curMoveNumber - 1].grid);
+    updateState(this, {moveNumber: curMoveNumber - 1});
   }
 
   constructor(props) {
@@ -421,7 +435,6 @@ class Game extends React.Component {
     }
 
     this.url = "ws://"+window.location.hostname+":9000/"+this.props.bot;
-    this.history = [];
     this.state = {
       currentGrid: null,
       stepNumber: 0,
@@ -430,6 +443,8 @@ class Game extends React.Component {
       statusMessage: "",
       movedStones: [],
       newHoles: [],
+      history: [],
+      moveNumber: 0,
     };
     this.state.currentGrid = Array(max_xy * max_xy).fill(null);
     this.sendMsg(this.player+":start");
@@ -455,10 +470,11 @@ class Game extends React.Component {
           <div className="textline">{this.state.statusMessage}</div>
         </div>
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: 'white', whiteSpace: 'pre' }}>
-          <div className="square" style={{ width: '80%', height: '100%', float: 'left'}}>
-            <div className="textline">  </div>
+          <div className="square" style={{ width: '80%', height: '100%', float: 'left', fontWeight: 'lighter'}}>
+            <div className="textline">난이도: {bot2difficulty(this.props.bot)}</div>
           </div>
-          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}>
+          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}
+          onClick={() => this.undo()}>
             <div className="textline">&lt;&lt;</div>
           </div>
           <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}>
