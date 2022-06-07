@@ -103,7 +103,7 @@ class Board extends React.Component {
     this.props.sendMove(selected, direction);
     this.moveStones(this.state.selected, direction);
     
-    updateState(this, {"selected": []});
+    this.setState({"selected": []});
   }
 
   calcMovablePoints(head, body, selected) {
@@ -245,12 +245,12 @@ class Board extends React.Component {
   addSelected(x, y) {
     const newSelected = this.state.selected.slice();
     newSelected.push(xy2index(x, y));
-    updateState(this, {
+    this.setState({
       "selected": newSelected,
     })
   }
   emptySelected() {
-    updateState(this, {
+    this.setState({
       "selected": [],
     })
   }
@@ -300,7 +300,6 @@ class Board extends React.Component {
   }
 
   render() {
-    console.log('Player turn: ' + this.props.playerTurn);
     this.updateMovable(this.state.selected);
     this.updateSelectable(this.state.selected);
     return (
@@ -342,18 +341,18 @@ class Board extends React.Component {
 
 class Game extends React.Component {
   appendLog(grid) {
+    console.log("move number: " + this.state.moveNumber);
     const history = this.state.history.splice(0, this.state.moveNumber);
-    updateState(this,
-      {'history': history.concat([{grid: grid}]),
-      'moveNumber': this.state.moveNumber + 1});
+    this.setState({history: history.concat([{grid: grid}]),
+    moveNumber: this.state.moveNumber + 1});
   }
   updateBoardFromMsg(evt) {
     if (evt.data === "false:black_win") {
-      updateState(this, {"playerIsNext": false, "winner": "Black WIN!!"});
+      this.setState({"playerIsNext": false, "winner": "Black WIN!!"});
       return
     }
     else if (evt.data === "false:white_win") {
-      updateState(this, {"playerIsNext": false, "winner": "White WIN!!"});
+      this.setState({"playerIsNext": false, "winner": "White WIN!!"});
       return
     }
     let splitData = evt.data.split(":");
@@ -373,7 +372,7 @@ class Game extends React.Component {
     const deadBlacks = decoded[1];
     const deadWhites = decoded[2];
     const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점"
-    updateState(this, {"currentGrid": grid, "playerIsNext": playerTurn, "statusMessage": statusMessage, "movedStones": movedStones, "newHoles": newHoles});
+    this.setState({"currentGrid": grid, "playerIsNext": playerTurn, "statusMessage": statusMessage, "movedStones": movedStones, "newHoles": newHoles});
   }
 
   updateBoard(grid) {
@@ -395,8 +394,7 @@ class Game extends React.Component {
       }
     }
     this.sendMsg([this.player, grid, selected, direction].join(":"));
-    updateState(this, {"playerIsNext": false});
-    console.log("change unmovable.")
+    this.setState({"playerIsNext": false});
   }
 
   sendMsg(msg) {
@@ -413,12 +411,20 @@ class Game extends React.Component {
 
   undo() {
     const curMoveNumber = this.state.moveNumber;
-    console.log('Undo!!!! ' + curMoveNumber);
-    if (curMoveNumber == 0) {
+    if (curMoveNumber == 1) {
       return;
     }
-    this.updateBoard(this.state.history[curMoveNumber - 1].grid);
-    updateState(this, {moveNumber: curMoveNumber - 1});
+    this.updateBoard(this.state.history[curMoveNumber - 2].grid);
+    this.setState({moveNumber: curMoveNumber - 1});
+  }
+
+  redo() {
+    const curMoveNumber = this.state.moveNumber;
+    if (curMoveNumber == this.state.history.length) {
+      return;
+    }
+    this.updateBoard(this.state.history[curMoveNumber].grid);
+    this.setState({moveNumber: curMoveNumber + 1});
   }
 
   constructor(props) {
@@ -473,11 +479,10 @@ class Game extends React.Component {
           <div className="square" style={{ width: '80%', height: '100%', float: 'left', fontWeight: 'lighter'}}>
             <div className="textline">난이도: {bot2difficulty(this.props.bot)}</div>
           </div>
-          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}
-          onClick={() => this.undo()}>
+          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}} onClick={() => this.undo()}>
             <div className="textline">&lt;&lt;</div>
           </div>
-          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}}>
+          <div className="square" style={{ width: '10%', height: '100%', float: 'left'}} onClick={() => this.redo()}>
             <div className="textline">&gt;&gt;</div>
           </div>
         </div>
@@ -500,14 +505,14 @@ function index2xy(idx) {
   return [x, y];
 }
 
-function updateState(obj, updateDict) {
-  const newState = {};
-  Object.assign(newState, obj.state);
-  for (const [key, value] of Object.entries(updateDict)) {
-    newState[key] = value;
-  }
-  obj.setState(newState);
-}
+// function updateState(obj, updateDict) {
+//   const newState = {};
+//   Object.assign(newState, obj.state);
+//   for (const [key, value] of Object.entries(updateDict)) {
+//     newState[key] = value;
+//   }
+//   obj.setState(newState);
+// }
 
 function decodeGrid(grid) {
   const ret = Array(max_xy * max_xy).fill(null);
