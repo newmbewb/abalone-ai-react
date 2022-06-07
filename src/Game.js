@@ -5,6 +5,7 @@ import { max_xy, board_size, directions } from './Config';
 import useConfirm from './useConfirm';
 import './index.css';
 import { bot2difficulty } from './gameBot';
+import { recordDisconnected, recordLoss, recordWin } from './cookie';
 
 class Circle extends React.Component {
   handleClick = () => {
@@ -103,7 +104,7 @@ class Board extends React.Component {
     this.props.sendMove(selected, direction);
     this.moveStones(this.state.selected, direction);
     
-    this.setState({"selected": []});
+    this.setState({selected: []});
   }
 
   calcMovablePoints(head, body, selected) {
@@ -160,7 +161,7 @@ class Board extends React.Component {
 
     if (grid[new_point] === 'black' || 
         grid[new_point] === 'white') {
-      this._moveStone(new_point, direction);
+      this._moveStone(grid, new_point, direction);
     }
     grid[new_point] = old_value;
     grid[stone] = null;
@@ -246,12 +247,12 @@ class Board extends React.Component {
     const newSelected = this.state.selected.slice();
     newSelected.push(xy2index(x, y));
     this.setState({
-      "selected": newSelected,
+      selected: newSelected,
     })
   }
   emptySelected() {
     this.setState({
-      "selected": [],
+      selected: [],
     })
   }
   
@@ -341,18 +342,35 @@ class Board extends React.Component {
 
 class Game extends React.Component {
   appendLog(grid) {
-    console.log("move number: " + this.state.moveNumber);
     const history = this.state.history.splice(0, this.state.moveNumber);
     this.setState({history: history.concat([{grid: grid}]),
     moveNumber: this.state.moveNumber + 1});
   }
   updateBoardFromMsg(evt) {
     if (evt.data === "false:black_win") {
-      this.setState({"playerIsNext": false, "winner": "Black WIN!!"});
+      this.setState({playerIsNext: false, winner: "Black WIN!!"});
+      if (this.state.recorded == false) {
+        if (this.props.color == 'black') {
+          recordWin(this.props.bot);
+        }
+        else {
+          recordLoss(this.props.bot);
+        }
+        this.setState({recorded: true});
+      }
       return
     }
     else if (evt.data === "false:white_win") {
-      this.setState({"playerIsNext": false, "winner": "White WIN!!"});
+      this.setState({playerIsNext: false, winner: "White WIN!!"});
+      if (this.state.recorded == false) {
+        if (this.props.color == 'white') {
+          recordWin(this.props.bot);
+        }
+        else {
+          recordLoss(this.props.bot);
+        }
+        this.setState({recorded: true});
+      }
       return
     }
     let splitData = evt.data.split(":");
@@ -372,7 +390,7 @@ class Game extends React.Component {
     const deadBlacks = decoded[1];
     const deadWhites = decoded[2];
     const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점"
-    this.setState({"currentGrid": grid, "playerIsNext": playerTurn, "statusMessage": statusMessage, "movedStones": movedStones, "newHoles": newHoles});
+    this.setState({currentGrid: grid, playerIsNext: playerTurn, statusMessage: statusMessage, movedStones: movedStones, newHoles: newHoles});
   }
 
   updateBoard(grid) {
@@ -394,7 +412,7 @@ class Game extends React.Component {
       }
     }
     this.sendMsg([this.player, grid, selected, direction].join(":"));
-    this.setState({"playerIsNext": false});
+    this.setState({playerIsNext: false});
   }
 
   sendMsg(msg) {
@@ -451,8 +469,10 @@ class Game extends React.Component {
       newHoles: [],
       history: [],
       moveNumber: 0,
+      recorded: false,
     };
     this.state.currentGrid = Array(max_xy * max_xy).fill(null);
+    recordDisconnected(this.props.bot);
     this.sendMsg(this.player+":start");
   }
   render() {

@@ -1,4 +1,5 @@
 import { Cookies } from "react-cookie";
+import { bot2difficulty } from "./gameBot";
 
 const cookies = new Cookies();
 
@@ -44,9 +45,9 @@ function getRecord () {
     }
 }
 
-function prepareRecordDifficulty (record, difficulty) {
-    if (record[difficulty] === undefined) {
-        record[difficulty] = {
+function prepareRecordBot (record, bot) {
+    if (record[bot] === undefined) {
+        record[bot] = {
             'win': 0,
             'loss': 0,
             'disconnected': 0
@@ -56,10 +57,10 @@ function prepareRecordDifficulty (record, difficulty) {
 
 function saveRecord (record) {
     var record_str_list = [];
-    for(var difficulty in record) {
-        var value = record[difficulty];
+    for(var bot in record) {
+        var value = record[bot];
         const record_str = [value['win'], value['loss'], value['disconnected']].join('/')
-        record_str_list.push(difficulty + ':' + record_str);
+        record_str_list.push(bot + ':' + record_str);
     }
     const userId = getCookie('userid');
     const record_str = record_str_list.join(';');
@@ -67,32 +68,50 @@ function saveRecord (record) {
     setCookie(userId + '_record', record_str);
 }
 
-export const recordWin = (difficulty) => {
+export const recordWin = (bot) => {
     const record = getRecord();
-    prepareRecordDifficulty(record, difficulty);
-    record[difficulty]['win'] += 1;
+    prepareRecordBot(record, bot);
+    record[bot]['win'] += 1;
+    if (record[bot]['disconnected'] > 0) {
+        record[bot]['disconnected'] -= 1;
+    }
     saveRecord(record);
 }
 
-export const recordLoss = (difficulty) => {
+export const recordLoss = (bot) => {
     const record = getRecord();
-    record[difficulty]['loss'] += 1;
+    prepareRecordBot(record, bot);
+    record[bot]['loss'] += 1;
+    if (record[bot]['disconnected'] > 0) {
+        record[bot]['disconnected'] -= 1;
+    }
     saveRecord(record);
 }
 
-export const recordDisconnected = (difficulty) => {
+// export const recordLoss = (bot) => {
+//     const record = getRecord();
+//     prepareRecordBot(record, bot);
+//     record[bot]['loss'] += 1;
+//     if (record[bot]['disconnected'] > 0) {
+//         record[bot]['disconnected'] -= 1;
+//     }
+//     saveRecord(record);
+// }
+
+export const recordDisconnected = (bot) => {
     const record = getRecord();
-    record[difficulty]['disconnected'] += 1;
+    prepareRecordBot(record, bot);
+    record[bot]['disconnected'] += 1;
     saveRecord(record);
 }
 
 export const getRecordString = () => {
     const record = getRecord();
     var record_str_list = [];
-    for(var difficulty in record) {
-        var value = record[difficulty];
+    for(var bot in record) {
+        var value = record[bot];
         const record_str = '' + value['win'] + ' 승 / ' + value['loss'] + ' 패 / ' + value['disconnected'] + ' 접속 끊김'
-        record_str_list.push(difficulty + ': ' + record_str);
+        record_str_list.push(bot2difficulty(bot) + ': ' + record_str);
     }
     const record_str = record_str_list.join("\n");
     return record_str;
