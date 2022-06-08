@@ -177,7 +177,6 @@ class Board extends React.Component {
       if (direction < 0) {
         selected.reverse();
       }
-      console.log("stones: " + selected + ", tail: " + selected[0] + ", direction: " + direction);
       this._moveStone(grid, selected[0], direction);
     }
     else {

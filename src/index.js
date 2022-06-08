@@ -89,15 +89,15 @@ class Home extends React.Component {
               />
               <DifficultyButton
                 width="33.33%"
-                text={bot2difficulty('mcts')}
-                backgroundColor={this.state.bot === "mcts" ? "#ddd" : "white"}
-                onClick={() => this.selectBot("mcts")}
+                text={bot2difficulty('mcts_ac_r1000')}
+                backgroundColor={this.state.bot === "mcts_ac_r1000" ? "#ddd" : "white"}
+                onClick={() => this.selectBot("mcts_ac_r1000")}
               />
               <DifficultyButton
                 width="33.33%"
-                text="어려움 (만드는 중)"
-                backgroundColor={this.state.bot === "hard" ? "#ddd" : "white"}
-                // onClick={() => this.selectBot("hard")}
+                text={bot2difficulty('mcts_ac_r2000')}
+                backgroundColor={this.state.bot === "mcts_ac_r2000" ? "#ddd" : "white"}
+                onClick={() => this.selectBot("mcts_ac_r2000")}
               />
               <div className="square" style={{ backgroundColor: '#ddd', width: '99.99%', height: '80%', boxShadow: "0 0 0 0.5px #ddd inset" }}>
                 <div className="textline" style={{fontSize: "2rem", whiteSpace: "pre-wrap"}}>
