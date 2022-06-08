@@ -22,9 +22,14 @@ export const getRandomKey = () => {
     return randomKey;
 }
 
-function getRecord () {
+export const getRecordRaw = () => {
     const userId = getCookie('userid');
     const record_full = getCookie(userId + '_record');
+    return record_full;
+}
+
+function getRecord () {
+    const record_full = getRecordRaw();
     if (record_full === undefined) {
         return {};
     }
@@ -64,7 +69,6 @@ function saveRecord (record) {
     }
     const userId = getCookie('userid');
     const record_str = record_str_list.join(';');
-    console.log('record str: ' + record_str);
     setCookie(userId + '_record', record_str);
 }
 

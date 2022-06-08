@@ -5,7 +5,7 @@ import { max_xy, board_size, directions } from './Config';
 import useConfirm from './useConfirm';
 import './index.css';
 import { bot2difficulty } from './gameBot';
-import { recordDisconnected, recordLoss, recordWin } from './cookie';
+import { getRecordRaw, recordDisconnected, recordLoss, recordWin } from './cookie';
 
 class Circle extends React.Component {
   handleClick = () => {
@@ -168,10 +168,23 @@ class Board extends React.Component {
   }
 
   moveStones(selected, direction) {
-    const selected_length = selected.length;
     const grid = this.props.grid.slice();
-    for (var i = 0; i < selected_length; i++) {
-      this._moveStone(grid, selected[i], direction);
+    selected.sort(function(a, b) {
+      return a - b;
+    });
+    const diff = selected[0] - selected[1];
+    if (diff == direction || diff == -direction) {
+      if (direction < 0) {
+        selected.reverse();
+      }
+      console.log("stones: " + selected + ", tail: " + selected[0] + ", direction: " + direction);
+      this._moveStone(grid, selected[0], direction);
+    }
+    else {
+      const selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        this._moveStone(grid, selected[i], direction);
+      }
     }
     this.props.updateBoard(grid);
   }
@@ -331,7 +344,7 @@ class Board extends React.Component {
         {
           this.props.grid.map((line, idx) => this.renderCircle(line, idx))
         }
-        <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="5" fontFamily='Georgia, serif' strokeWidth="0.5" paintOrder="stroke" stroke="#F4B183">
+        <text x="50%" y="7.5%" dominantBaseline="middle" textAnchor="middle" fontSize="4" fontFamily='Georgia, serif' strokeWidth="0.5" paintOrder="stroke" stroke="#F4B183">
           {this.props.winner}
         </text>
         </svg>
@@ -347,31 +360,21 @@ class Game extends React.Component {
     moveNumber: this.state.moveNumber + 1});
   }
   updateBoardFromMsg(evt) {
-    if (evt.data === "false:black_win") {
-      this.setState({playerIsNext: false, winner: "Black WIN!!"});
-      if (this.state.recorded == false) {
-        if (this.props.color == 'black') {
-          recordWin(this.props.bot);
-        }
-        else {
-          recordLoss(this.props.bot);
-        }
-        this.setState({recorded: true});
+    if (this.state.recorded == false) {
+      if ((evt.data === "false:black_win" && this.props.color == 'black') ||
+          (evt.data === "false:white_win" && this.props.color == 'white')) {
+        recordWin(this.props.bot);
+        this.setState({playerIsNext: false, winner: "You Win!!"});
+        this.sendMsg("record:" + getRecordRaw());
+        return;
       }
-      return
-    }
-    else if (evt.data === "false:white_win") {
-      this.setState({playerIsNext: false, winner: "White WIN!!"});
-      if (this.state.recorded == false) {
-        if (this.props.color == 'white') {
-          recordWin(this.props.bot);
-        }
-        else {
-          recordLoss(this.props.bot);
-        }
-        this.setState({recorded: true});
+      else if ((evt.data === "false:black_win" && this.props.color == 'white') ||
+               (evt.data === "false:white_win" && this.props.color == 'black')) {
+        recordLoss(this.props.bot);
+        this.setState({playerIsNext: false, winner: "You Lose!!"});
+        this.sendMsg("record:" + getRecordRaw());
+        return;
       }
-      return
     }
     let splitData = evt.data.split(":");
     let playerTurn = splitData[0];
@@ -382,19 +385,31 @@ class Game extends React.Component {
     const grid = decoded[0];
     if (playerTurn === "true") {
       playerTurn = true;
-      this.appendLog(grid);
     }
     else {
       playerTurn = false;
     }
+    this.appendLog(grid);
     const deadBlacks = decoded[1];
     const deadWhites = decoded[2];
-    const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점"
+    const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점";
     this.setState({currentGrid: grid, playerIsNext: playerTurn, statusMessage: statusMessage, movedStones: movedStones, newHoles: newHoles});
   }
 
   updateBoard(grid) {
-    this.setState({currentGrid: grid});
+    var blackScore = 14;
+    var whiteScore = 14;
+    for (var i = 0; i < grid.length; i++) {
+      const color = grid[i];
+      if (color === 'black') {
+        whiteScore--;
+      }
+      if (color === 'white') {
+        blackScore--;
+      }
+    }
+    const statusMessage = "Black: " + blackScore + " 점       White: " + whiteScore + " 점";
+    this.setState({currentGrid: grid, statusMessage: statusMessage});
   }
 
   sendMove(selected, direction) {
