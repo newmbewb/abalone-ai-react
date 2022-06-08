@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { max_xy, board_size, directions } from './Config';
 import useConfirm from './useConfirm';
 import './index.css';
-import { bot2difficulty } from './gameBot';
+import { bot2difficulty, bot2port } from './gameBot';
 import { getRecordRaw, recordDisconnected, recordLoss, recordWin } from './cookie';
 
 class Circle extends React.Component {
@@ -473,7 +473,7 @@ class Game extends React.Component {
       console.log("Invalid player..");
     }
 
-    this.url = "ws://"+window.location.hostname+":9000/"+this.props.bot;
+    this.url = "ws://"+window.location.hostname+":"+bot2port(this.props.bot)+"/"+this.props.bot;
     this.state = {
       currentGrid: null,
       stepNumber: 0,

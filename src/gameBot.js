@@ -13,6 +13,17 @@ export const bot2difficulty = (botname) => {
     }
 }
 
+
+export const bot2port = (botname) => {
+    if (botname === 'ab3' || botname === 'mcts') {
+        return 9001;
+    }
+    if (botname === 'mcts_ac_r1000' || botname === 'mcts_ac_r2000') {
+        return 9000;
+    }
+}
+
+
 export const bot2explanation = (botname) => {
     if (botname === 'ab3') {
         return 'AlphaBeta Purning으로 만들어진 인공지능입니다.\n쉽게 이길 수 있습니다. 세 수 앞을 내다봅니다.'

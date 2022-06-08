@@ -58,7 +58,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bot: "ab3",
+      bot: "mcts",
       color: "black"
     };
   }
@@ -83,9 +83,9 @@ class Home extends React.Component {
             <div className="centerdiv" style={{ width: '90%', height: '70%' }}>
               <DifficultyButton
                 width="33.33%"
-                text={bot2difficulty('ab3')}
-                backgroundColor={this.state.bot === 'ab3' ? "#ddd" : "white"}
-                onClick={() => this.selectBot('ab3')}
+                text={bot2difficulty('mcts')}
+                backgroundColor={this.state.bot === 'mcts' ? "#ddd" : "white"}
+                onClick={() => this.selectBot('mcts')}
               />
               <DifficultyButton
                 width="33.33%"
@@ -201,7 +201,7 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.color = "black";
-    this.bot = "ab3";
+    this.bot = "mcts";
     this.gameKey = 0;
     this.state = {
       now: "home",
