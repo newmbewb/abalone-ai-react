@@ -169,6 +169,7 @@ class Board extends React.Component {
 
   moveStones(selected, direction) {
     const grid = this.props.grid.slice();
+    const movedStones = selected.slice().map(x => x + direction);
     selected.sort(function(a, b) {
       return a - b;
     });
@@ -185,7 +186,7 @@ class Board extends React.Component {
         this._moveStone(grid, selected[i], direction);
       }
     }
-    this.props.updateBoard(grid);
+    this.props.updateBoard(grid, movedStones);
   }
 
   updateMovable(selected) {
@@ -395,7 +396,7 @@ class Game extends React.Component {
     this.setState({currentGrid: grid, playerIsNext: playerTurn, statusMessage: statusMessage, movedStones: movedStones, newHoles: newHoles});
   }
 
-  updateBoard(grid) {
+  updateBoard(grid, movedStones) {
     var blackScore = 14;
     var whiteScore = 14;
     for (var i = 0; i < grid.length; i++) {
@@ -408,7 +409,7 @@ class Game extends React.Component {
       }
     }
     const statusMessage = "Black: " + blackScore + " 점       White: " + whiteScore + " 점";
-    this.setState({currentGrid: grid, statusMessage: statusMessage});
+    this.setState({currentGrid: grid, statusMessage: statusMessage, movedStones: movedStones});
   }
 
   sendMove(selected, direction) {
@@ -446,7 +447,7 @@ class Game extends React.Component {
     if (curMoveNumber == 1) {
       return;
     }
-    this.updateBoard(this.state.history[curMoveNumber - 2].grid);
+    this.updateBoard(this.state.history[curMoveNumber - 2].grid, []);
     this.setState({moveNumber: curMoveNumber - 1});
   }
 
@@ -455,7 +456,7 @@ class Game extends React.Component {
     if (curMoveNumber == this.state.history.length) {
       return;
     }
-    this.updateBoard(this.state.history[curMoveNumber].grid);
+    this.updateBoard(this.state.history[curMoveNumber].grid, []);
     this.setState({moveNumber: curMoveNumber + 1});
   }
 
@@ -496,7 +497,7 @@ class Game extends React.Component {
         <div className="game-board" style={{ width: '95vmin', height: '95vmin' }}>
           <Board
             grid={this.state.currentGrid}
-            updateBoard={(grid) => this.updateBoard(grid)}
+            updateBoard={(grid, movedStones) => this.updateBoard(grid, movedStones)}
             player={this.player}
             oppPlayer={this.oppPlayer}
             playerTurn={this.state.playerIsNext}
