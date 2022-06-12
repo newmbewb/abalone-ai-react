@@ -1,6 +1,6 @@
 .modal {
-    font-size: 20px;
-    width: 600px;
+    font-size: 3rem;
+    width: 80vmin;
     background: #F9D6BF;
 }
 .modal-button {
@@ -43,7 +43,7 @@
     line-height: 20px;
     right: -10px;
     top: -10px;
-    font-size: 24px;
+    font-size: 4rem;
     background: #ffffff;
     border-radius: 18px;
     border: 1px solid #cfcece;

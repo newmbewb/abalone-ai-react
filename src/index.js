@@ -18,7 +18,7 @@ class NameForm extends React.Component {
     console.log("cookied name: " + name);
     if (name === undefined) {
       name = 'visitor';
-      setCookie(name);
+      setCookie('userid', name);
     }
     this.state = {value: name};
 
@@ -59,8 +59,15 @@ class Home extends React.Component {
     super(props);
     this.state = {
       bot: "mcts",
-      color: "black"
+      color: "black",
+      options: {flip_board: false}
     };
+  }
+  flip_board() {
+    const new_options = {};
+    Object.assign(new_options, this.state.options);
+    new_options['flip_board'] = !new_options['flip_board']
+    this.setState({options: new_options});
   }
   selectBot(bot) {
     this.setState((state) => {
@@ -189,8 +196,16 @@ class Home extends React.Component {
           </div>
         </div>
         <div className="square" style={{backgroundColor: '#ffaaaa', width: '100%', height: '10vmin', float: 'left'}}
-          onClick={() => this.props.startGame(this.state.color, this.state.bot)}>
+          onClick={() => this.props.startGame(this.state.color, this.state.bot, this.state.options)}>
           <div className="textline">시작</div>
+        </div>
+        <div className="square" style={{
+          backgroundColor: this.state.options['flip_board']? "#aaa" : "white",
+          width: '100%',
+          height: '10vmin',
+          float: 'left'}}
+          onClick={() => this.flip_board()}>
+          <div className="textline">보드 반대로</div>
         </div>
       </div>
     )
@@ -203,15 +218,17 @@ class Main extends React.Component {
     this.color = "black";
     this.bot = "mcts";
     this.gameKey = 0;
+    this.options = {};
     this.state = {
       now: "home",
     };
   }
 
-  startGame(color, bot) {
+  startGame(color, bot, options) {
     this.color = color;
     this.bot = bot;
     this.gameKey += 1;
+    this.options = options;
     this.setState((state) => {
       return {
         now: "game",
@@ -232,7 +249,7 @@ class Main extends React.Component {
     return (
       <div id='pageroot' style={{ width: '100%', height: '100%' }}>
         <Home
-          startGame={(a, b) => this.startGame(a, b)}
+          startGame={(a, b, c) => this.startGame(a, b, c)}
         />
       </div>
     )
@@ -245,6 +262,7 @@ class Main extends React.Component {
             key={this.gameKey}
             color={this.color}
             bot={this.bot}
+            options={this.options}
             goBackHome={() => {this.Reset()}}
             gameTag={Math.random()}
           />

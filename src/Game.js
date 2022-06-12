@@ -393,6 +393,9 @@ class Game extends React.Component {
     const deadBlacks = decoded[1];
     const deadWhites = decoded[2];
     const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점";
+    if (this.props.bot === 'self') {
+      this.flipPlayer();
+    }
     this.setState({currentGrid: grid, playerIsNext: playerTurn, statusMessage: statusMessage, movedStones: movedStones, newHoles: newHoles});
   }
 
@@ -460,8 +463,15 @@ class Game extends React.Component {
     this.setState({moveNumber: curMoveNumber + 1});
   }
 
+  flipPlayer() {
+    const tmp = this.player;
+    this.player = this.oppPlayer;
+    this.oppPlayer = tmp;
+  }
+
   constructor(props) {
     super(props);
+    console.log("flip board: " + this.props.options['flip_board']);
     this.player = this.props.color;
     if (this.player === "black") {
       this.oppPlayer = "white";
@@ -471,6 +481,9 @@ class Game extends React.Component {
     }
     else {
       console.log("Invalid player..");
+    }
+    if (this.props.bot === 'self') {
+      this.flipPlayer();
     }
 
     this.url = "ws://"+window.location.hostname+":"+bot2port(this.props.bot)+"/"+this.props.bot;
@@ -488,7 +501,12 @@ class Game extends React.Component {
     };
     this.state.currentGrid = Array(max_xy * max_xy).fill(null);
     recordDisconnected(this.props.bot);
-    this.sendMsg(this.player+":start");
+    if (this.props.options['flip_board']) {
+      this.sendMsg(this.player+":start:flip_board");
+    }
+    else{
+      this.sendMsg(this.player+":start");
+    }
   }
   render() {
     const hello="hello world";
