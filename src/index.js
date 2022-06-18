@@ -279,7 +279,13 @@ class Main extends React.Component {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Main />
+  <div>
+    <Main />
+    <div className="newmbewb">
+    AI Code: <a href="https://github.com/newmbewb/abalone-ai"> Github </a> <br/>
+    Developer: <a href="https://newmbewb.github.io/"> newmbewb </a>
+    </div>
+  </div>
 );
 
 // If you want to start measuring performance in your app, pass a function
