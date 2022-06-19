@@ -24,7 +24,7 @@ export const getRandomKey = () => {
 
 export const getRecordRaw = () => {
     const userId = getCookie('userid');
-    const record_full = getCookie(userId + '_record');
+    const record_full = getCookie(encodeURIComponent(userId) + '_record');
     return record_full;
 }
 
@@ -69,7 +69,7 @@ function saveRecord (record) {
     }
     const userId = getCookie('userid');
     const record_str = record_str_list.join(';');
-    setCookie(userId + '_record', record_str);
+    setCookie(encodeURIComponent(userId) + '_record', record_str);
 }
 
 export const recordWin = (bot) => {

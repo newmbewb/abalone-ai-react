@@ -27,7 +27,6 @@ class NameForm extends React.Component {
 
   handleChange(event) {
     this.setState({value: event.target.value});
-    console.log("hello " + event.target.value);
     setCookie('userid', event.target.value);
   }
 
