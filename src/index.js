@@ -10,6 +10,7 @@ import useConfirm from './useConfirm';
 import alphabetaImage from './alphabeta.png';
 import Popup from 'reactjs-popup';
 import { bot2difficulty, bot2explanation } from './gameBot';
+import { Helmet, HelmetProvider  } from 'react-helmet-async';
 
 class NameForm extends React.Component {
   constructor(props) {
@@ -57,7 +58,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bot: "mcts",
+      bot: "network_naive",
       color: "black",
       options: {flip_board: false}
     };
@@ -89,9 +90,9 @@ class Home extends React.Component {
             <div className="centerdiv" style={{ width: '90%', height: '70%' }}>
               <DifficultyButton
                 width="33.33%"
-                text={bot2difficulty('mcts')}
-                backgroundColor={this.state.bot === 'mcts' ? "#ddd" : "white"}
-                onClick={() => this.selectBot('mcts')}
+                text={bot2difficulty('network_naive')}
+                backgroundColor={this.state.bot === 'network_naive' ? "#ddd" : "white"}
+                onClick={() => this.selectBot('network_naive')}
               />
               <DifficultyButton
                 width="33.33%"
@@ -215,7 +216,7 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.color = "black";
-    this.bot = "mcts";
+    this.bot = "network_naive";
     this.gameKey = 0;
     this.options = {};
     this.state = {
@@ -278,13 +279,23 @@ class Main extends React.Component {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <div>
-    <Main />
-    <div className="newmbewb">
-    AI Code: <a href="https://github.com/newmbewb/abalone-ai"> Github </a> <br/>
-    Developer: <a href="https://newmbewb.github.io/"> newmbewb </a>
+  <>
+    <HelmetProvider>
+      <Helmet>
+        <title>Abalone AI</title>
+        <meta property="og:image" content="./thumbnail.jpg"/>
+        <meta property="og:title" content="Abalone AI"/>
+        <meta property="og:description" content="무열찡이 안놀아줘..."/>
+      </Helmet>
+    </HelmetProvider>
+    <div>
+      <Main />
+      <div className="newmbewb">
+      AI Code: <a href="https://github.com/newmbewb/abalone-ai"> Github </a> <br/>
+      Developer: <a href="https://newmbewb.github.io/"> newmbewb </a>
+      </div>
     </div>
-  </div>
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function
