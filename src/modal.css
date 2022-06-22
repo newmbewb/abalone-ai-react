@@ -12,7 +12,7 @@
     height: 100%;
     border: None;
     /* font-size: inherit; */
-    font: inherit;
+    font-weight: inherit;
     /* font-style: inherit; */
 }
 .modal > .header {

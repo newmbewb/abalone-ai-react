@@ -3,22 +3,17 @@ import ReactDOM from 'react-dom/client';
 import Game from './Game'
 import './index.css';
 import './modal.css';
-import { setCookie, getCookie, recordWin, recordLoss, recordDisconnected, getRecordString } from './cookie'
-import { confirmAlert } from 'react-confirm-alert';
-import useConfirm from './useConfirm';
-import alphabetaImage from './alphabeta.png';
-import thumbnail from './thumbnail.jpg';
+import { setCookie, getCookie, getRecordString } from './cookie'
 import { Translation } from './lang/i18nHelper.tsx'
 import Popup from 'reactjs-popup';
 import { bot2difficulty, bot2explanation } from './gameBot';
-import { Helmet, HelmetProvider  } from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import i18next from "./lang/i18n";
 
 class NameForm extends React.Component {
   constructor(props) {
     super(props);
     var name = getCookie('userid');
-    console.log("cookied name: " + name);
     if (name === undefined) {
       name = 'visitor';
       setCookie('userid', name);
@@ -136,44 +131,46 @@ class Home extends React.Component {
               width: '20%',
               height: '100%',
               float: 'left'}}>
-            <div className="textline">
-            <Popup trigger={<button className="modal-button"><Translation data="record"/></button>} modal nested>
-              {close => (
-                <div className="modal">
-                  <button className="close" onClick={close}>
-                    &times;
-                  </button>
-                  <div className="header"> <Translation data="record"/> </div>
-                  <div className="content">
-                    {' '}
-                    {getRecordString()}
-                  </div>
-                  <div className="actions">
-                    {/* <Popup
-                      trigger={<button className="button"> Trigger </button>}
-                      position="top center"
-                      nested
-                    >
-                      <span>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae
-                        magni omnis delectus nemo, maxime molestiae dolorem numquam
-                        mollitia, voluptate ea, accusamus excepturi deleniti ratione
-                        sapiente! Laudantium, aperiam doloribus. Odit, aut.
-                      </span>
-                    </Popup> */}
-                    <button
-                      className="button"
-                      onClick={() => {
-                        close();
-                      }}
-                    >
-                      <Translation data="close"/>
+            
+              <Popup trigger={
+                <button className="modal-button textline">
+                  <Translation data="record"/>
+                </button>} modal nested>
+                {close => (
+                  <div className="modal">
+                    <button className="close" onClick={close}>
+                      &times;
                     </button>
+                    <div className="header"> <Translation data="record"/> </div>
+                    <div className="content">
+                      {' '}
+                      {getRecordString()}
+                    </div>
+                    <div className="actions">
+                      {/* <Popup
+                        trigger={<button className="button"> Trigger </button>}
+                        position="top center"
+                        nested
+                      >
+                        <span>
+                          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae
+                          magni omnis delectus nemo, maxime molestiae dolorem numquam
+                          mollitia, voluptate ea, accusamus excepturi deleniti ratione
+                          sapiente! Laudantium, aperiam doloribus. Odit, aut.
+                        </span>
+                      </Popup> */}
+                      <button
+                        className="button"
+                        onClick={() => {
+                          close();
+                        }}
+                      >
+                        <Translation data="close"/>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </Popup>
-            </div>
+                )}
+              </Popup>
           </div>
         </div>
         <div id='player-color' style={{ float: 'top', height: '13vmin'}}>

@@ -1,6 +1,4 @@
-import { typeImplementation } from '@testing-library/user-event/dist/type/typeImplementation';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { max_xy, board_size, directions } from './Config';
 import useConfirm from './useConfirm';
 import './index.css';
@@ -24,8 +22,7 @@ class Circle extends React.Component {
 
   render() {
     const key=`${this.props.y}_${this.props.x}`
-    const cx = this.props.x_indent + this.props.x * this.props.scale
-    let clickable;
+    const cx = this.props.x_indent + this.props.x * this.props.scale;
     let r = this.props.r;
     if (Math.abs(this.props.x - this.props.y) >= board_size) {
       return
@@ -38,24 +35,20 @@ class Circle extends React.Component {
 
     // Set color
     if (this.props.color === 'black' && this.props.selected) {
-      fill = "url(#blackSelected)"
-      clickable = true
+      fill = "url(#blackSelected)";
     }
     else if (this.props.color === 'black' && !this.props.selected) {
-      fill = "url(#black)"
-      clickable = true
+      fill = "url(#black)";
       if (this.props.moved) {
         strokeDasharray=.1;
         stroke="#ED7D31";
       }
     }
     else if (this.props.color === 'white' && this.props.selected) {
-      fill = "url(#whiteSelected)"
-      clickable = true
+      fill = "url(#whiteSelected)";
     }
     else if (this.props.color === 'white' && !this.props.selected) {
-      fill = "url(#white)"
-      clickable = true
+      fill = "url(#white)";
       if (this.props.moved) {
         strokeDasharray=.1;
         stroke="#ED7D31";
@@ -176,7 +169,7 @@ class Board extends React.Component {
       return a - b;
     });
     const diff = selected[0] - selected[1];
-    if (diff == direction || diff == -direction) {
+    if (diff === direction || diff === -direction) {
       if (direction < 0) {
         selected.reverse();
       }
@@ -362,16 +355,16 @@ class Game extends React.Component {
     moveNumber: this.state.moveNumber + 1});
   }
   updateBoardFromMsg(evt) {
-    if (this.state.recorded == false) {
-      if ((evt.data === "false:black_win" && this.props.color == 'black') ||
-          (evt.data === "false:white_win" && this.props.color == 'white')) {
+    if (this.state.recorded === false) {
+      if ((evt.data === "false:black_win" && this.props.color === 'black') ||
+          (evt.data === "false:white_win" && this.props.color === 'white')) {
         recordWin(this.props.bot);
         this.setState({playerIsNext: false, winner: "You Win!!"});
         this.sendMsg("record:" + getRecordRaw());
         return;
       }
-      else if ((evt.data === "false:black_win" && this.props.color == 'white') ||
-               (evt.data === "false:white_win" && this.props.color == 'black')) {
+      else if ((evt.data === "false:black_win" && this.props.color === 'white') ||
+               (evt.data === "false:white_win" && this.props.color === 'black')) {
         recordLoss(this.props.bot);
         this.setState({playerIsNext: false, winner: "You Lose!!"});
         this.sendMsg("record:" + getRecordRaw());
@@ -449,7 +442,7 @@ class Game extends React.Component {
 
   undo() {
     const curMoveNumber = this.state.moveNumber;
-    if (curMoveNumber == 1) {
+    if (curMoveNumber === 1) {
       return;
     }
     this.updateBoard(this.state.history[curMoveNumber - 2].grid, []);
@@ -458,7 +451,7 @@ class Game extends React.Component {
 
   redo() {
     const curMoveNumber = this.state.moveNumber;
-    if (curMoveNumber == this.state.history.length) {
+    if (curMoveNumber === this.state.history.length) {
       return;
     }
     this.updateBoard(this.state.history[curMoveNumber].grid, []);
@@ -473,7 +466,6 @@ class Game extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log("flip board: " + this.props.options['flip_board']);
     this.player = this.props.color;
     if (this.player === "black") {
       this.oppPlayer = "white";
@@ -525,7 +517,6 @@ class Game extends React.Component {
     }
   }
   render() {
-    const hello="hello world";
     return (
       <div className="game">
         <div className="game-board" style={{ width: '95vmin', height: '95vmin' }}>
