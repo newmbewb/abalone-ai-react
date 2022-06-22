@@ -1,0 +1,12 @@
+{
+    "difficulty": "Difficulty",
+    "id": "ID",
+    "my_color": "Your Color",
+    "black": "Black",
+    "white": "White",
+    "record": "Record",
+    "start": "Start",
+    "close": "Close",
+    "back_home": "Back to home",
+    "reverse_board": "Reverse Board"
+}

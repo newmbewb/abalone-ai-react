@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { max_xy, board_size, directions } from './Config';
 import Game from './Game'
 import './index.css';
 import './modal.css';
@@ -9,9 +8,11 @@ import { confirmAlert } from 'react-confirm-alert';
 import useConfirm from './useConfirm';
 import alphabetaImage from './alphabeta.png';
 import thumbnail from './thumbnail.jpg';
+import { Translation } from './lang/i18nHelper.tsx'
 import Popup from 'reactjs-popup';
 import { bot2difficulty, bot2explanation } from './gameBot';
 import { Helmet, HelmetProvider  } from 'react-helmet';
+import i18next from "./lang/i18n";
 
 class NameForm extends React.Component {
   constructor(props) {
@@ -85,7 +86,7 @@ class Home extends React.Component {
       <div id='home-root' style={{ width: '100%', height: '100%' }}>
         <div id='difficulty'>
           <div className="square" style={{ width: '15%', height: '64vmin', float: 'left'}}>
-            <div className="textline">난이도</div>
+            <div className="textline"><Translation data="difficulty"/></div>
           </div>
           <div className="square" style={{backgroundColor: '#ffef93', width: '85%', height: '64vmin', float: 'left'}}>
             <div className="centerdiv" style={{ width: '90%', height: '70%' }}>
@@ -119,11 +120,11 @@ class Home extends React.Component {
         </div>
         <div id='player-color' style={{ float: 'top', height: '13vmin'}}>
           <div className="square" style={{ width: '15%', height: '100%', float: 'left'}}>
-            <div className="textline">아이디</div>
+            <div className="textline"><Translation data="id"/></div>
           </div>
           <div className="square" style={{
               backgroundColor: "white",
-              width: '75%',
+              width: '65%',
               height: '100%',
               float: 'left'}}>
             <div className="textline">
@@ -132,17 +133,17 @@ class Home extends React.Component {
           </div>
           <div className="square" style={{
               backgroundColor: "white",
-              width: '10%',
+              width: '20%',
               height: '100%',
               float: 'left'}}>
             <div className="textline">
-            <Popup trigger={<button className="modal-button">전적</button>} modal nested>
+            <Popup trigger={<button className="modal-button"><Translation data="record"/></button>} modal nested>
               {close => (
                 <div className="modal">
                   <button className="close" onClick={close}>
                     &times;
                   </button>
-                  <div className="header"> 전적 </div>
+                  <div className="header"> <Translation data="record"/> </div>
                   <div className="content">
                     {' '}
                     {getRecordString()}
@@ -166,7 +167,7 @@ class Home extends React.Component {
                         close();
                       }}
                     >
-                      닫기
+                      <Translation data="close"/>
                     </button>
                   </div>
                 </div>
@@ -177,7 +178,7 @@ class Home extends React.Component {
         </div>
         <div id='player-color' style={{ float: 'top', height: '13vmin'}}>
           <div className="square" style={{ width: '15%', height: '100%', float: 'left'}}>
-            <div className="textline">내 색깔</div>
+            <div className="textline"><Translation data="my_color"/></div>
           </div>
           <div className="square" style={{
               backgroundColor: this.state.color === "black"? "#aaa" : "white",
@@ -185,7 +186,7 @@ class Home extends React.Component {
               height: '100%',
               float: 'left'}}
               onClick={() => this.setColor('black')}>
-            <div className="textline">검은색</div>
+            <div className="textline"><Translation data="black"/></div>
           </div>
           <div className="square" style={{
               backgroundColor: this.state.color === "white"? "#aaa" : "white",
@@ -193,12 +194,12 @@ class Home extends React.Component {
               height: '100%',
               float: 'left'}}
               onClick={() => this.setColor('white')}>
-            <div className="textline">흰색</div>
+            <div className="textline"><Translation data="white"/></div>
           </div>
         </div>
         <div className="square" style={{backgroundColor: '#ffaaaa', width: '100%', height: '10vmin', float: 'left'}}
           onClick={() => this.props.startGame(this.state.color, this.state.bot, this.state.options)}>
-          <div className="textline">시작</div>
+          <div className="textline"><Translation data="start"/></div>
         </div>
         <div className="square" style={{
           backgroundColor: this.state.options['flip_board']? "#aaa" : "white",
@@ -206,7 +207,7 @@ class Home extends React.Component {
           height: '10vmin',
           float: 'left'}}
           onClick={() => this.flip_board()}>
-          <div className="textline">보드 반대로</div>
+          <div className="textline"><Translation data="reverse_board"/></div>
         </div>
       </div>
     )
@@ -223,6 +224,13 @@ class Main extends React.Component {
     this.state = {
       now: "home",
     };
+
+    if (navigator.language === "ko-KR" || navigator.language === "ko-kr" || navigator.language === "ko") {
+      i18next.changeLanguage("ko");
+    }
+    else {
+      i18next.changeLanguage("en");
+    }
   }
 
   startGame(color, bot, options) {
@@ -280,18 +288,19 @@ class Main extends React.Component {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  // <Translation data="hello"/>
   <>
     <Helmet>
       <title>Abalone AI</title>
       {/* <meta property="og:image" content={thumbnail}/> */}
       <meta property="og:title" content="Abalone AI"/>
-      <meta property="og:description" content="무열찡이 안놀아줘..."/>
+      <meta property="og:description" content="Abalone AI"/>
     </Helmet>
     <div>
       <Main />
       <div className="newmbewb">
       AI Code: <a href="https://github.com/newmbewb/abalone-ai"> Github </a> <br/>
-      Developer: <a href="https://newmbewb.github.io/"> newmbewb </a>
+      Developer: <a href="https://newmbewb.github.io/"> newmbewb </a> <br/>
       </div>
     </div>
   </>

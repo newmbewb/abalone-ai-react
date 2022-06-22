@@ -6,6 +6,8 @@ import useConfirm from './useConfirm';
 import './index.css';
 import { bot2difficulty, bot2port } from './gameBot';
 import { getRecordRaw, recordDisconnected, recordLoss, recordWin } from './cookie';
+import { Translation } from './lang/i18nHelper.tsx'
+import i18next from "./lang/i18n";
 
 class Circle extends React.Component {
   handleClick = () => {
@@ -392,7 +394,7 @@ class Game extends React.Component {
     this.appendLog(grid);
     const deadBlacks = decoded[1];
     const deadWhites = decoded[2];
-    const statusMessage = "Black: " + deadWhites + " 점       White: " + deadBlacks + " 점";
+    const statusMessage = "Black: " + deadWhites + " " + this.str_point + "       White: " + deadBlacks + " " + this.str_point;
     if (this.props.bot === 'self') {
       this.flipPlayer();
     }
@@ -411,7 +413,7 @@ class Game extends React.Component {
         blackScore--;
       }
     }
-    const statusMessage = "Black: " + blackScore + " 점       White: " + whiteScore + " 점";
+    const statusMessage = "Black: " + blackScore + " " + this.str_point + "       White: " + whiteScore + " " + this.str_point;
     this.setState({currentGrid: grid, statusMessage: statusMessage, movedStones: movedStones});
   }
 
@@ -507,6 +509,20 @@ class Game extends React.Component {
     else{
       this.sendMsg(this.player+":start");
     }
+
+    if (i18next.language === "ko") {
+      this.stop_message = "게임을 중지하겠습니까?";
+    }
+    else {
+      this.stop_message = "Do you want to stop this game?";
+    }
+
+    if (i18next.language === "ko") {
+      this.str_point = "점";
+    }
+    else {
+      this.str_point = "Points";
+    }
   }
   render() {
     const hello="hello world";
@@ -530,7 +546,7 @@ class Game extends React.Component {
         </div>
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: 'white', whiteSpace: 'pre' }}>
           <div className="square" style={{ width: '80%', height: '100%', float: 'left', fontWeight: 'lighter'}}>
-            <div className="textline">난이도: {bot2difficulty(this.props.bot)}</div>
+            <div className="textline"><Translation data="difficulty"/>: {bot2difficulty(this.props.bot)}</div>
           </div>
           <div className="square" style={{ width: '10%', height: '100%', float: 'left'}} onClick={() => this.undo()}>
             <div className="textline">&lt;&lt;</div>
@@ -540,8 +556,8 @@ class Game extends React.Component {
           </div>
         </div>
         <div style={{ width: '95vmin', height: '10vmin', top: '50%', fontSize: '3rem', textAlign: 'center', backgroundColor: '#F4B183' }}
-        onClick={() => useConfirm("게임을 중지하겠습니까?", this.props.goBackHome, () => {})}>
-          <div className="textline">홈으로</div>
+        onClick={() => useConfirm(this.stop_message, this.props.goBackHome, () => {})}>
+          <div className="textline"><Translation data="back_home"/></div>
         </div>
       </div>
     );
