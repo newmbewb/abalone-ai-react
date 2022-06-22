@@ -77,16 +77,16 @@ export const bot2explanation = (botname) => {
     }
     else {
         if (botname === 'ab3') {
-            return 'AI uses AlphaBeta Purning.\nYou can win easily. Look-forward three moves.'
+            return 'AI uses AlphaBeta Purning.\nYou can win easily. It look-forward three moves.'
         }
         if (botname === 'mcts') {
-            return 'AI uses Monte Carlo Tree Search.\nYou can win easily. Rollout 10000 times.'
+            return 'AI uses Monte Carlo Tree Search.\nYou can win easily. It rollouts 10000 times.'
         }
         if (botname === 'network_naive') {
-            return 'AI is enhanced by reinforcement learning. Do not look-forward.'
+            return 'AI is enhanced by reinforcement learning. It does not look-forward.'
         }
         if (botname === 'mcts_ac_r1000') {
-            return 'AI is enhanced by reinforcement learning. Rollout 1000 times.\nFirst move is very slow, so please be patient.'
+            return 'AI is enhanced by reinforcement learning. It rollouts 1000 times.\nFirst move is very slow, so please be patient.'
         }
         if (botname === 'mcts_ac_r2000') {
             return 'AI is enhanced by reinforcement learning. Rollout 2000 times.\nIt is slow. Please wait the AI!\nFirst move is very slow, so please be patient.'
