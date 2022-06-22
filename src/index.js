@@ -8,9 +8,10 @@ import { setCookie, getCookie, recordWin, recordLoss, recordDisconnected, getRec
 import { confirmAlert } from 'react-confirm-alert';
 import useConfirm from './useConfirm';
 import alphabetaImage from './alphabeta.png';
+import thumbnail from './thumbnail.jpg';
 import Popup from 'reactjs-popup';
 import { bot2difficulty, bot2explanation } from './gameBot';
-import { Helmet, HelmetProvider  } from 'react-helmet-async';
+import { Helmet, HelmetProvider  } from 'react-helmet';
 
 class NameForm extends React.Component {
   constructor(props) {
@@ -280,14 +281,12 @@ class Main extends React.Component {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
-    <HelmetProvider>
-      <Helmet>
-        <title>Abalone AI</title>
-        <meta property="og:image" content="./thumbnail.jpg"/>
-        <meta property="og:title" content="Abalone AI"/>
-        <meta property="og:description" content="무열찡이 안놀아줘..."/>
-      </Helmet>
-    </HelmetProvider>
+    <Helmet>
+      <title>Abalone AI</title>
+      {/* <meta property="og:image" content={thumbnail}/> */}
+      <meta property="og:title" content="Abalone AI"/>
+      <meta property="og:description" content="무열찡이 안놀아줘..."/>
+    </Helmet>
     <div>
       <Main />
       <div className="newmbewb">
